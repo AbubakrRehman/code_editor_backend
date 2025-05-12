@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Job" ALTER COLUMN "output" SET DEFAULT '',
+ALTER COLUMN "output" SET DATA TYPE TEXT;

@@ -2,8 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const { executeFile, generateFile } = require('./utilities');
 
+import { PrismaClient } from '@prisma/client'
+const prismaClient = new PrismaClient()
+
 const app = express();
 const PORT = 3000;
+
+
 
 // Enable CORS
 app.use(cors({
@@ -16,8 +21,22 @@ app.use(express.json());
 
 
 // Basic route
-app.get('/', (req, res) => {
-    res.send('Welcome to the Express server!');
+app.get('/job/:id', async (req, res) => {
+    const jobId = req.params.id;
+
+    try {
+        let job = await prismaClient.job.findUnique({
+            where: { id: jobId }
+        })
+
+        if (!job)
+            return res.status(404).json({ message: "Job not found" });
+
+        return res.json(job);
+
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
 });
 
 app.post('/execute', async (req, res) => {
@@ -27,10 +46,32 @@ app.post('/execute', async (req, res) => {
     //create and write into file
     try {
         let filePath = await generateFile(code, extension);
+        let job = await prismaClient.job.create({ data: {} })
+        res.json({ jobId: job.id });
+
         let output = await executeFile(filePath, extension)
-        res.json({ output });
+        await prismaClient.job.update({
+            where: { id: job.id },
+            data: {
+                output: output,
+                status: "COMPLETED"
+            }
+        })
+
     } catch (error) {
-        res.json({ output: (error.stderr ? error.stderr : error.error) });
+        let resultantError = error.stderr ? error.stderr : error.error;
+        resultantError = JSON.stringify(resultantError);
+        if (!resultantError)
+            return res.status(500).json({ message: "Internal Server Error" });
+
+
+        await prismaClient.job.update({
+            where: { id: job.id },
+            data: {
+                output: resultantError,
+                status: "COMPLETED"
+            }
+        })
     }
 
 });
