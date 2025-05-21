@@ -161,7 +161,7 @@ const config = {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": "postgresql://postgres:Sigma7086@localhost:5432/mydb?schema=public"
+        "value": "postgresql://myuser:mypassword@localhost:5433/mydb"
       }
     }
   },

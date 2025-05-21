@@ -1,14 +1,14 @@
 const express = require('express');
 const cors = require('cors');
-const { executeFile, generateFile } = require('./utilities');
+const { executeFile, generateFile, startDB } = require('./utilities');
 
-import { PrismaClient } from '@prisma/client'
-const prismaClient = new PrismaClient()
+const { PrismaClient } = require('./generated/prisma')
+const prisma = new PrismaClient()
+
+startDB();
 
 const app = express();
 const PORT = 3000;
-
-
 
 // Enable CORS
 app.use(cors({
@@ -22,10 +22,10 @@ app.use(express.json());
 
 // Basic route
 app.get('/job/:id', async (req, res) => {
-    const jobId = req.params.id;
+    const jobId = +req.params.id;
 
     try {
-        let job = await prismaClient.job.findUnique({
+        let job = await prisma.job.findUnique({
             where: { id: jobId }
         })
 
@@ -35,22 +35,25 @@ app.get('/job/:id', async (req, res) => {
         return res.json(job);
 
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server Error" });
+        return res.status(500).json({ message: "Internal Server Error", errorCode: 1003 });
     }
 });
 
 app.post('/execute', async (req, res) => {
-    console.log("req body", req.body);
     const { code, extension } = req.body;
 
-    //create and write into file
+    if (!code || !extension)
+        return res.status(400).json({ message: "Code and extension are required" });
+
+    let job;
+
     try {
         let filePath = await generateFile(code, extension);
-        let job = await prismaClient.job.create({ data: {} })
-        res.json({ jobId: job.id });
+        job = await prisma.job.create({ data: {} });
+        res.json(job);
 
         let output = await executeFile(filePath, extension)
-        await prismaClient.job.update({
+        await prisma.job.update({
             where: { id: job.id },
             data: {
                 output: output,
@@ -59,19 +62,18 @@ app.post('/execute', async (req, res) => {
         })
 
     } catch (error) {
-        let resultantError = error.stderr ? error.stderr : error.error;
-        resultantError = JSON.stringify(resultantError);
-        if (!resultantError)
-            return res.status(500).json({ message: "Internal Server Error" });
-
-
-        await prismaClient.job.update({
-            where: { id: job.id },
-            data: {
-                output: resultantError,
-                status: "COMPLETED"
-            }
-        })
+        console.log("error", error)
+        if (error.errorCode === 1001) {
+            await prisma.job.update({
+                where: { id: job.id },
+                data: {
+                    output: error.message,
+                    status: "FAILED"
+                }
+            })
+        } else {
+            return res.status(500).json({ message: "Internal Server Error", errorCode: 1002 });
+        }
     }
 
 });
