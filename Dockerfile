@@ -26,4 +26,4 @@ EXPOSE 3000
 
 # Define the command to run the application
 # CMD ["npm", "start"]
-CMD ["sed -i 's/\r$//' wait-for-it.sh", "./wait-for-it.sh", "postgres:5432", "--", "sh", "-c","npx prisma migrate dev --name init && node index.js"]
+CMD ["./wait-for-it.sh", "postgres:5432", "--", "sh", "-c","npx prisma migrate dev --name init && node index.js"]
