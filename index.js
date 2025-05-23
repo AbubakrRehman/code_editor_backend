@@ -78,7 +78,6 @@ app.post('/execute', async (req, res) => {
 
 });
 
-console.log("hi this is a test of docker file 22222222223333333")
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

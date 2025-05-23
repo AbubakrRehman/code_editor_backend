@@ -26,7 +26,6 @@ function executeFile(filePath, extension) {
     return new Promise((resolve, reject) => {
         exec(`node ${filePath}`, (error, stdout, stderr) => {
 
-            console.log("stdout", stdout);
             if (stdout) {
                 resolve(stdout);
                 return
