@@ -1,4 +1,4 @@
-const fs = require('fs').promises;
+const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const { exec } = require('child_process');
@@ -18,15 +18,27 @@ async function generateFile(content, extension) {
     const jobId = uuidv4();
     const fileName = `${jobId}.${extension}`
     const filePath = path.join(dirCodes, fileName);
-    await fs.writeFile(filePath, content, 'utf8');
-    return filePath;
+    // await fs.writeFile(filePath, content, 'utf8');
+
+    return new Promise((resolve, reject) => {
+        fs.writeFile(filePath, content, 'utf8', (err) => {
+            if (err) {
+                console.error(`Error writing file: ${err.message}`);
+            } else {
+                console.log(`File written successfully to ${filePath}`);
+                resolve(filePath);
+            }
+        });
+    })
+  
+    // return filePath;
 }
 
 function executeFile(filePath, extension) {
     return new Promise((resolve, reject) => {
-        exec(`node ${filePath}`, (error, stdout, stderr) => {
+        exec(`node "${filePath}"`, (error, stdout, stderr) => {
 
-            console.log("stdout", stdout);
+           
             if (stdout) {
                 resolve(stdout);
                 return

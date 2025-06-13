@@ -1,0 +1,11 @@
+# Ignore node_modules
+node_modules
+generated
+
+# Ignore environment variables
+.env
+
+
+# Ignore Docker files
+Dockerfile
+Dockerfile.*

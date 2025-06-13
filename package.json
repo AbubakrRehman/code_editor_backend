@@ -4,7 +4,6 @@
   "description": "",
   "license": "ISC",
   "author": "",
-  "type": "commonjs",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -12,13 +11,11 @@
     "dev": "nodemon --legacy-watch index.js"
   },
   "dependencies": {
-    "@prisma/client": "^6.7.0",
+    "@prisma/client": "^6.9.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "uuid": "^11.1.0"
-  },
-  "devDependencies": {
     "nodemon": "^3.1.10",
-    "prisma": "^6.7.0"
+    "prisma": "^6.9.0",
+    "uuid": "^11.1.0"
   }
 }

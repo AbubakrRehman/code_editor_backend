@@ -3,15 +3,19 @@ version: '3.8'
 services:
   postgres:
     image: postgres:17.4
-    container_name: postgres_db
+    container_name: postgres_app
     env_file:
       - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 
   backend:
-    build: .
-    container_name: backend
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend_app
     ports:
       - "3000:3000"
     depends_on:
@@ -19,3 +23,22 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy_app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - backend
+      - postgres
+
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:
