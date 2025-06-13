@@ -12,7 +12,7 @@ const PORT = 3000;
 
 // Enable CORS
 app.use(cors({
-    origin: process.env.FRONTEND_DOMAIN, // Set your allowed origin here
+    origin: "*", // Set your allowed origin here
     credentials: true
 }));
 
