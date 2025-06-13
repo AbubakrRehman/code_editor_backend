@@ -37,8 +37,7 @@ async function generateFile(content, extension) {
 function executeFile(filePath, extension) {
     return new Promise((resolve, reject) => {
         exec(`node "${filePath}"`, (error, stdout, stderr) => {
-
-           
+            
             if (stdout) {
                 resolve(stdout);
                 return
