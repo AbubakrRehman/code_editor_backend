@@ -3,7 +3,6 @@ version: '3.8'
 services:
   postgres:
     image: postgres:17.4
-    container_name: postgres_app
     env_file:
       - .env
     ports:
@@ -15,7 +14,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: backend_app
+    image: backend:v1.0
     ports:
       - "3000:3000"
     depends_on:
