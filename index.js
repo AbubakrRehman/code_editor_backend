@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { executeFile, generateFile, startDB } = require('./utilities');
+const { executeFile, generateFile, startDB, removeFile } = require('./utilities');
 
 const { PrismaClient } = require('./generated/prisma')
 const prisma = new PrismaClient()
@@ -45,14 +45,18 @@ app.post('/execute', async (req, res) => {
     if (!code || !extension)
         return res.status(400).json({ message: "Code and extension are required" });
 
+    if (!['java', 'js', 'cpp', 'c', 'py'].includes(extension))
+        return res.status(400).json({ message: "Extension is not supported" });
+
     let job;
 
     try {
-        let filePath = await generateFile(code, extension);
+        let { filePath, fileName } = await generateFile(code, extension);
         job = await prisma.job.create({ data: {} });
         res.json(job);
 
-        let output = await executeFile(filePath, extension)
+        let output = await executeFile(fileName, extension);
+        await removeFile(fileName, extension);
         await prisma.job.update({
             where: { id: job.id },
             data: {
@@ -60,7 +64,6 @@ app.post('/execute', async (req, res) => {
                 status: "COMPLETED"
             }
         })
-
     } catch (error) {
         if (error.errorCode === 1001) {
             await prisma.job.update({
