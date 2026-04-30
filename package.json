@@ -6,16 +6,20 @@
   "author": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --legacy-watch index.js",
     "start": "node index.js",
-    "dev": "nodemon --legacy-watch index.js"
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:migrate:deploy": "prisma migrate deploy"
   },
   "dependencies": {
-    "@prisma/client": "^6.9.0",
+    "@prisma/client": "^6.8.2",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "nodemon": "^3.1.10",
-    "prisma": "^6.9.0",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.8.2"
   }
 }

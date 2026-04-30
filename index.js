@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const { executeFile, generateFile, startDB, removeFile } = require('./utilities');
 
-const { PrismaClient } = require('./generated/prisma')
+// import { PrismaClient } from "@prisma/client";
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient()
 
 // startDB();

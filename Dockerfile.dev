@@ -20,6 +20,8 @@ RUN npm install
 
 COPY . .
 
+RUN npx prisma generate
+
 EXPOSE 8091
 
-CMD ["sh", "-c", "npx prisma generate && npx prisma migrate deploy && npm start"]
+CMD ["sh", "-c", "npx prisma migrate dev && npm run start"]

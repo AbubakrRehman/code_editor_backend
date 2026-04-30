@@ -3,7 +3,8 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const { exec } = require('child_process');
 
-const { PrismaClient } = require("../generated/prisma");
+// const { PrismaClient } = require("../generated/prisma");
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient()
 
 
