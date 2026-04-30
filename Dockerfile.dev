@@ -1,4 +1,4 @@
-FROM node:19.9.0
+FROM node:19.9.0-alpine
 
 # Prevent interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
